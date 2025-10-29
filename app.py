@@ -30,30 +30,99 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
+# Custom CSS for dark mode with high contrast
 st.markdown("""
 <style>
 .main-header {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #1f77b4;
+    color: #00D9FF;
     text-align: center;
     margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
 }
 .sub-header {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #2ca02c;
+    color: #00FF9F;
     margin-top: 1.5rem;
+    border-bottom: 2px solid #00FF9F;
+    padding-bottom: 0.5rem;
 }
 .metric-card {
-    background-color: #f0f2f6;
+    background-color: #1E2127;
     padding: 1rem;
     border-radius: 0.5rem;
     margin: 0.5rem 0;
+    border: 1px solid #2E3137;
+}
+
+/* Enhanced contrast for readability */
+.stMarkdown {
+    color: #FAFAFA;
+}
+
+/* Improved button styling */
+.stButton > button {
+    background-color: #00D9FF;
+    color: #0E1117;
+    border: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.stButton > button:hover {
+    background-color: #00FF9F;
+    box-shadow: 0 0 15px rgba(0, 255, 159, 0.5);
+}
+
+/* Success message styling */
+.stSuccess {
+    background-color: rgba(0, 255, 159, 0.1);
+    border-left: 4px solid #00FF9F;
+}
+
+/* Info message styling */
+.stInfo {
+    background-color: rgba(0, 217, 255, 0.1);
+    border-left: 4px solid #00D9FF;
+}
+
+/* Metric value emphasis */
+[data-testid="stMetricValue"] {
+    color: #00D9FF;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* Sidebar improvements */
+.css-1d391kg {
+    background-color: #1E2127;
+}
+
+/* Code block styling */
+code {
+    background-color: #2E3137;
+    color: #00FF9F;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
 }
 </style>
 """, unsafe_allow_html=True)
+
+# Configure matplotlib for dark theme
+plt.style.use('dark_background')
+plt.rcParams['figure.facecolor'] = '#0E1117'
+plt.rcParams['axes.facecolor'] = '#1E2127'
+plt.rcParams['axes.edgecolor'] = '#FAFAFA'
+plt.rcParams['axes.labelcolor'] = '#FAFAFA'
+plt.rcParams['text.color'] = '#FAFAFA'
+plt.rcParams['xtick.color'] = '#FAFAFA'
+plt.rcParams['ytick.color'] = '#FAFAFA'
+plt.rcParams['grid.color'] = '#3E4147'
+plt.rcParams['grid.alpha'] = 0.3
+plt.rcParams['legend.facecolor'] = '#1E2127'
+plt.rcParams['legend.edgecolor'] = '#3E4147'
 
 # Initialize session state
 if 'data_loaded' not in st.session_state:
@@ -68,7 +137,7 @@ def main():
     # Title
     st.markdown('<p class="main-header">🧬 Intelligent Cancer Classification</p>', 
                 unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; color: #666; font-size: 1.1rem;">Using Hybrid GA-PSO Optimization and Transformer Networks</p>', 
+    st.markdown('<p style="text-align: center; color: #A0A0A0; font-size: 1.1rem;">Using Hybrid GA-PSO Optimization and Transformer Networks</p>', 
                 unsafe_allow_html=True)
     
     # Sidebar configuration
@@ -260,16 +329,16 @@ def main():
         col3.metric("Gene Reduction", f"{reduction:.1f}%")
         col4.metric("Optimization Time", f"{results['optimization_time']:.1f}s")
         
-        # Plot fitness history
+        # Plot fitness history with dark theme
         st.markdown("#### Optimization Progress")
         fig, ax = plt.subplots(figsize=(10, 4))
-        ax.plot(results['fitness_history'], label='Best Fitness', linewidth=2)
-        ax.plot(results['mean_fitness_history'], label='Mean Fitness', linewidth=2, alpha=0.7)
-        ax.set_xlabel('Generation')
-        ax.set_ylabel('Fitness')
-        ax.set_title('GA-PSO Convergence')
-        ax.legend()
-        ax.grid(alpha=0.3)
+        ax.plot(results['fitness_history'], label='Best Fitness', linewidth=3, color='#00D9FF')
+        ax.plot(results['mean_fitness_history'], label='Mean Fitness', linewidth=3, color='#00FF9F', alpha=0.8)
+        ax.set_xlabel('Generation', fontsize=12, color='#FAFAFA')
+        ax.set_ylabel('Fitness', fontsize=12, color='#FAFAFA')
+        ax.set_title('GA-PSO Convergence', fontsize=14, fontweight='bold', color='#00D9FF')
+        ax.legend(facecolor='#1E2127', edgecolor='#3E4147', fontsize=10)
+        ax.grid(alpha=0.3, color='#3E4147')
         st.pyplot(fig)
         plt.close()
         

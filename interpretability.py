@@ -16,6 +16,22 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
+def setup_dark_plot_style():
+    """Configure matplotlib for dark theme with high contrast."""
+    plt.style.use('dark_background')
+    plt.rcParams['figure.facecolor'] = '#0E1117'
+    plt.rcParams['axes.facecolor'] = '#1E2127'
+    plt.rcParams['axes.edgecolor'] = '#FAFAFA'
+    plt.rcParams['axes.labelcolor'] = '#FAFAFA'
+    plt.rcParams['text.color'] = '#FAFAFA'
+    plt.rcParams['xtick.color'] = '#FAFAFA'
+    plt.rcParams['ytick.color'] = '#FAFAFA'
+    plt.rcParams['grid.color'] = '#3E4147'
+    plt.rcParams['grid.alpha'] = 0.3
+    plt.rcParams['legend.facecolor'] = '#1E2127'
+    plt.rcParams['legend.edgecolor'] = '#3E4147'
+
+
 class GeneImportanceAnalyzer:
     """
     Analyze gene importance for Transformer model predictions.
@@ -191,6 +207,8 @@ class GeneImportanceAnalyzer:
         Returns:
             matplotlib figure
         """
+        setup_dark_plot_style()
+        
         print(f"\nAnalyzing top {top_k} influential genes...")
         
         top_indices, top_scores, top_names = self.get_top_genes(
@@ -202,22 +220,22 @@ class GeneImportanceAnalyzer:
         
         # Reverse order for better visualization (highest at top)
         y_pos = np.arange(len(top_names))
-        ax.barh(y_pos, top_scores[::-1], color='steelblue', edgecolor='navy')
+        ax.barh(y_pos, top_scores[::-1], color='#00D9FF', edgecolor='#00FF9F', linewidth=1.5)
         ax.set_yticks(y_pos)
-        ax.set_yticklabels(top_names[::-1])
-        ax.set_xlabel('Importance Score', fontsize=12)
-        ax.set_ylabel('Gene', fontsize=12)
+        ax.set_yticklabels(top_names[::-1], color='#FAFAFA')
+        ax.set_xlabel('Importance Score', fontsize=12, color='#FAFAFA')
+        ax.set_ylabel('Gene', fontsize=12, color='#FAFAFA')
         
         if title is None:
             title = f'Top {top_k} Most Influential Genes'
-        ax.set_title(title, fontsize=14, fontweight='bold')
+        ax.set_title(title, fontsize=14, fontweight='bold', color='#00D9FF')
         
-        ax.grid(axis='x', alpha=0.3)
+        ax.grid(axis='x', alpha=0.3, color='#3E4147')
         
         plt.tight_layout()
         
         if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='#0E1117')
             print(f"Gene importance plot saved to {save_path}")
         
         # Print summary
@@ -242,6 +260,8 @@ class GeneImportanceAnalyzer:
         Returns:
             matplotlib figure
         """
+        setup_dark_plot_style()
+        
         top_indices, top_scores, top_names = self.get_top_genes(
             X, top_k=top_k, method=method
         )
@@ -257,28 +277,28 @@ class GeneImportanceAnalyzer:
         # Create heatmap
         fig, ax = plt.subplots(figsize=(12, 8))
         
-        sns.heatmap(X_sorted.T, cmap='RdYlBu_r', center=0,
+        sns.heatmap(X_sorted.T, cmap='viridis', center=0,
                    yticklabels=top_names, cbar_kws={'label': 'Expression Level'},
                    ax=ax)
         
-        # Add class boundaries
+        # Add class boundaries with high contrast
         unique_classes = np.unique(y_sorted)
         boundaries = []
         for cls in unique_classes:
             boundary = np.where(y_sorted == cls)[0][-1] + 0.5
             boundaries.append(boundary)
             if boundary < len(y_sorted):
-                ax.axvline(boundary, color='black', linewidth=2, linestyle='--')
+                ax.axvline(boundary, color='#00FF9F', linewidth=2, linestyle='--', alpha=0.8)
         
-        ax.set_xlabel('Samples (sorted by class)', fontsize=12)
-        ax.set_ylabel('Top Genes', fontsize=12)
+        ax.set_xlabel('Samples (sorted by class)', fontsize=12, color='#FAFAFA')
+        ax.set_ylabel('Top Genes', fontsize=12, color='#FAFAFA')
         ax.set_title(f'Expression Heatmap: Top {top_k} Genes', 
-                    fontsize=14, fontweight='bold')
+                    fontsize=14, fontweight='bold', color='#00D9FF')
         
         plt.tight_layout()
         
         if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='#0E1117')
             print(f"Gene heatmap saved to {save_path}")
         
         return fig

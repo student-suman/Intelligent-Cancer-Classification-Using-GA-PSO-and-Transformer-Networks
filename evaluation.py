@@ -25,6 +25,22 @@ import seaborn as sns
 import time
 
 
+def setup_dark_plot_style():
+    """Configure matplotlib for dark theme with high contrast."""
+    plt.style.use('dark_background')
+    plt.rcParams['figure.facecolor'] = '#0E1117'
+    plt.rcParams['axes.facecolor'] = '#1E2127'
+    plt.rcParams['axes.edgecolor'] = '#FAFAFA'
+    plt.rcParams['axes.labelcolor'] = '#FAFAFA'
+    plt.rcParams['text.color'] = '#FAFAFA'
+    plt.rcParams['xtick.color'] = '#FAFAFA'
+    plt.rcParams['ytick.color'] = '#FAFAFA'
+    plt.rcParams['grid.color'] = '#3E4147'
+    plt.rcParams['grid.alpha'] = 0.3
+    plt.rcParams['legend.facecolor'] = '#1E2127'
+    plt.rcParams['legend.edgecolor'] = '#3E4147'
+
+
 class ModelEvaluator:
     """
     Comprehensive evaluation suite for cancer classification models.
@@ -161,21 +177,22 @@ class ModelEvaluator:
         Returns:
             matplotlib figure
         """
+        setup_dark_plot_style()
         cm = confusion_matrix(y_true, y_pred)
         
         fig, ax = plt.subplots(figsize=(10, 8))
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+        sns.heatmap(cm, annot=True, fmt='d', cmap='viridis', 
                    xticklabels=self.class_names,
                    yticklabels=self.class_names,
-                   ax=ax)
-        ax.set_xlabel('Predicted Label', fontsize=12)
-        ax.set_ylabel('True Label', fontsize=12)
-        ax.set_title('Confusion Matrix', fontsize=14, fontweight='bold')
+                   ax=ax, annot_kws={'color': '#FAFAFA', 'fontweight': 'bold'})
+        ax.set_xlabel('Predicted Label', fontsize=12, color='#FAFAFA')
+        ax.set_ylabel('True Label', fontsize=12, color='#FAFAFA')
+        ax.set_title('Confusion Matrix', fontsize=14, fontweight='bold', color='#00D9FF')
         
         plt.tight_layout()
         
         if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='#0E1117')
             print(f"Confusion matrix saved to {save_path}")
         
         return fig
@@ -192,34 +209,39 @@ class ModelEvaluator:
         Returns:
             matplotlib figure
         """
+        setup_dark_plot_style()
+        
         # Binarize labels for one-vs-rest
         y_true_bin = label_binarize(y_true, classes=range(self.n_classes))
         
         fig, ax = plt.subplots(figsize=(10, 8))
+        
+        # High contrast colors for dark mode
+        colors = ['#00D9FF', '#00FF9F', '#FF6B9D', '#FFD700', '#9D4EDD', '#06FFA5', '#FF006E']
         
         # Plot ROC curve for each class
         for i in range(self.n_classes):
             fpr, tpr, _ = roc_curve(y_true_bin[:, i], y_pred_proba[:, i])
             roc_auc = auc(fpr, tpr)
             
-            ax.plot(fpr, tpr, lw=2, 
+            ax.plot(fpr, tpr, lw=3, color=colors[i % len(colors)],
                    label=f'{self.class_names[i]} (AUC = {roc_auc:.3f})')
         
         # Plot diagonal (random classifier)
-        ax.plot([0, 1], [0, 1], 'k--', lw=2, label='Random Classifier')
+        ax.plot([0, 1], [0, 1], 'r--', lw=2, label='Random Classifier', alpha=0.7)
         
         ax.set_xlim([0.0, 1.0])
         ax.set_ylim([0.0, 1.05])
-        ax.set_xlabel('False Positive Rate', fontsize=12)
-        ax.set_ylabel('True Positive Rate', fontsize=12)
-        ax.set_title('ROC Curves (One-vs-Rest)', fontsize=14, fontweight='bold')
-        ax.legend(loc='lower right', fontsize=10)
-        ax.grid(alpha=0.3)
+        ax.set_xlabel('False Positive Rate', fontsize=12, color='#FAFAFA')
+        ax.set_ylabel('True Positive Rate', fontsize=12, color='#FAFAFA')
+        ax.set_title('ROC Curves (One-vs-Rest)', fontsize=14, fontweight='bold', color='#00D9FF')
+        ax.legend(loc='lower right', fontsize=10, facecolor='#1E2127', edgecolor='#3E4147')
+        ax.grid(alpha=0.3, color='#3E4147')
         
         plt.tight_layout()
         
         if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='#0E1117')
             print(f"ROC curves saved to {save_path}")
         
         return fig
@@ -235,32 +257,34 @@ class ModelEvaluator:
         Returns:
             matplotlib figure
         """
+        setup_dark_plot_style()
+        
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
         
-        # Loss curves
-        ax1.plot(history.history['loss'], label='Training Loss', linewidth=2)
+        # Loss curves with high contrast colors
+        ax1.plot(history.history['loss'], label='Training Loss', linewidth=3, color='#FF6B9D')
         if 'val_loss' in history.history:
-            ax1.plot(history.history['val_loss'], label='Validation Loss', linewidth=2)
-        ax1.set_xlabel('Epoch', fontsize=12)
-        ax1.set_ylabel('Loss', fontsize=12)
-        ax1.set_title('Model Loss', fontsize=14, fontweight='bold')
-        ax1.legend(fontsize=10)
-        ax1.grid(alpha=0.3)
+            ax1.plot(history.history['val_loss'], label='Validation Loss', linewidth=3, color='#00D9FF')
+        ax1.set_xlabel('Epoch', fontsize=12, color='#FAFAFA')
+        ax1.set_ylabel('Loss', fontsize=12, color='#FAFAFA')
+        ax1.set_title('Model Loss', fontsize=14, fontweight='bold', color='#00D9FF')
+        ax1.legend(fontsize=10, facecolor='#1E2127', edgecolor='#3E4147')
+        ax1.grid(alpha=0.3, color='#3E4147')
         
-        # Accuracy curves
-        ax2.plot(history.history['accuracy'], label='Training Accuracy', linewidth=2)
+        # Accuracy curves with high contrast colors
+        ax2.plot(history.history['accuracy'], label='Training Accuracy', linewidth=3, color='#00FF9F')
         if 'val_accuracy' in history.history:
-            ax2.plot(history.history['val_accuracy'], label='Validation Accuracy', linewidth=2)
-        ax2.set_xlabel('Epoch', fontsize=12)
-        ax2.set_ylabel('Accuracy', fontsize=12)
-        ax2.set_title('Model Accuracy', fontsize=14, fontweight='bold')
-        ax2.legend(fontsize=10)
-        ax2.grid(alpha=0.3)
+            ax2.plot(history.history['val_accuracy'], label='Validation Accuracy', linewidth=3, color='#FFD700')
+        ax2.set_xlabel('Epoch', fontsize=12, color='#FAFAFA')
+        ax2.set_ylabel('Accuracy', fontsize=12, color='#FAFAFA')
+        ax2.set_title('Model Accuracy', fontsize=14, fontweight='bold', color='#00D9FF')
+        ax2.legend(fontsize=10, facecolor='#1E2127', edgecolor='#3E4147')
+        ax2.grid(alpha=0.3, color='#3E4147')
         
         plt.tight_layout()
         
         if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='#0E1117')
             print(f"Training history saved to {save_path}")
         
         return fig
