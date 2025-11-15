@@ -333,3 +333,5 @@ For questions or issues:
 ---
 
 **Note**: This is a research-grade implementation. For clinical applications, additional validation, regulatory compliance, and domain expert review are required.
+#   I n t e l l i g e n t - C a n c e r - C l a s s i f i c a t i o n - U s i n g - G A - P S O - a n d - T r a n s f o r m e r - N e t w o r k s  
+ 
